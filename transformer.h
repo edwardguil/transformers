@@ -4,8 +4,6 @@
 #include <torch/torch.h>
 #include <optional>
 
-// For now, omit using namespaces for clarity
-
 class Attention : public torch::nn::Module {
 public:
     enum class AttentionType {
@@ -18,6 +16,7 @@ private:
     torch::nn::Linear query{nullptr};
     torch::nn::Linear key{nullptr};
     torch::nn::Linear value{nullptr};
+    torch::nn::Linear proj{nullptr};
     AttentionType type;
 
 public:
@@ -37,7 +36,8 @@ public:
 class EncoderBlock : public torch::nn::Module {
     Attention attention;
     MLP mlp;
-    torch::nn::LayerNorm layer_norm{nullptr};
+    torch::nn::LayerNorm layer_norm1{nullptr};
+    torch::nn::LayerNorm layer_norm2{nullptr};
 
 public:
     EncoderBlock(std::size_t n_embeds, std::size_t n_heads);
@@ -48,7 +48,9 @@ class DecoderBlock : public torch::nn::Module {
     Attention masked_attention;
     Attention cross_attention;
     MLP mlp;
-    torch::nn::LayerNorm layer_norm{nullptr};
+    torch::nn::LayerNorm layer_norm1{nullptr};
+    torch::nn::LayerNorm layer_norm2{nullptr};
+    torch::nn::LayerNorm layer_norm3{nullptr};
     bool decoderOnly;
 
 public:
